@@ -5,6 +5,7 @@ import com.kzkv.tbolimpiada.entity.Booking;
 import com.kzkv.tbolimpiada.repository.BookingRepository;
 import com.kzkv.tbolimpiada.repository.specification.BookingSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +47,7 @@ public class BookingService {
 	}
 
 	public boolean isTicketBooked(UUID id) {
-		return bookingRepository.exists(BookingSpecification.hasTicketId(id));
+		return bookingRepository.exists(Example.of(Booking.builder().ticketId(id).build()));
 	}
 
 }

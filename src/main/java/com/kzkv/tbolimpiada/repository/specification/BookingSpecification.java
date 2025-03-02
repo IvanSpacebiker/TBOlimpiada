@@ -8,10 +8,6 @@ import java.util.UUID;
 
 public class BookingSpecification {
 
-	public static Specification<Booking> hasTicketId(UUID routeId) {
-		return (root, query, cb) -> routeId == null ? null : cb.equal(root.get("routeId"), routeId);
-	}
-
 	public static Specification<Booking> hasPhone(String phone) {
 		return (root, query, cb) -> phone == null ? null : cb.equal(root.get("phone"), phone);
 	}
@@ -22,8 +18,7 @@ public class BookingSpecification {
 
 	public static Specification<Booking> withFilters(BookingFilters filters) {
 		return Specification
-				.where(hasTicketId(filters.routeId()))
-				.and(hasPhone(filters.phone()))
+				.where(hasPhone(filters.phone()))
 				.and(hasEmail(filters.email()));
 	}
 }

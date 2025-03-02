@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("routes")
+@RequestMapping("tickets")
 @RequiredArgsConstructor
 public class TicketController {
 
@@ -34,7 +34,7 @@ public class TicketController {
 	public ResponseEntity<Ticket> createTicket(@RequestBody Ticket ticket) {
 		Ticket created = ticketService.createTicket(ticket);
 		return ResponseEntity
-				.created(URI.create("/routes/" + created.getId()))
+				.created(URI.create("/tickets/" + created.getId()))
 				.body(created);
 	}
 
