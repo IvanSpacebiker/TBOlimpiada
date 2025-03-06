@@ -3,13 +3,16 @@ import {TextField, Button, Box, Typography, Grid, FormControl, InputLabel, Selec
 
 const SearchForm = ({ onSearch }) => {
     const [transportType, setTransportType] = useState("ANY");
-    const [departure, setDeparture] = useState(null);
-    const [arrival, setArrival] = useState(null);
-    const [date, setDate] = useState(null);
+    const [departure, setDeparture] = useState('');
+    const [arrival, setArrival] = useState('');
+    const [datetime, setDatetime] = useState('');
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        onSearch({ transportType, departure, arrival, date });
+        const departureDateTime = datetime
+            ? new Date(datetime).toISOString()
+            : null;
+        onSearch({ transportType, departure, arrival, departureDateTime });
     };
 
     return (
@@ -51,10 +54,9 @@ const SearchForm = ({ onSearch }) => {
                     </Grid>
                     <Grid item xs={6} sm={3}>
                         <TextField
-                            type="date"
-                            label="Дата"
-                            value={date}
-                            onChange={(e) => setDate(e.target.value)}
+                            type="datetime-local"
+                            value={datetime}
+                            onChange={(e) => setDatetime(e.target.value)}
                             fullWidth
                         />
                     </Grid>

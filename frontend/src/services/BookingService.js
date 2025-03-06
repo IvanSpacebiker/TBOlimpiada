@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'api/bookings'; // Замените на ваш URL
+const API_URL = 'api/bookings';
 
 export const getBookingById = (id) => {
     return axios.get(`${API_URL}/${id}`);

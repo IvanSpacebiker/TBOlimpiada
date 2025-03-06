@@ -1,12 +1,10 @@
 package com.kzkv.tbolimpiada.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.UUID;
+import com.kzkv.tbolimpiada.entity.converter.EncryptionConverter;
 
 @Setter
 @Getter
@@ -19,8 +17,14 @@ public class Booking {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
-	private UUID ticketId;
+
+	@OneToOne
+	private Ticket ticket;
+
+	@Convert(converter = EncryptionConverter.class)
 	private String phone;
+
+	@Convert(converter = EncryptionConverter.class)
 	private String email;
 
 }

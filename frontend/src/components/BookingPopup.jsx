@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {Dialog, DialogTitle, DialogContent, TextField, Button, Box, Typography, Grid} from '@mui/material';
 import {createBooking} from "../services/BookingService.js";
-import {getTickets} from "../services/TicketService.js";
 
 const BookingPopup = ({ open, onClose, ticket }) => {
     const [phone, setPhone] = useState('');
@@ -34,8 +33,9 @@ const BookingPopup = ({ open, onClose, ticket }) => {
 
     const handleConfirmBooking = async () => {
         if (validate()) {
-            await createBooking({ ticketId: ticket.id, phone, email })
+            await createBooking({ ticket: ticket, phone, email })
             onClose()
+            window.location.reload()
         }
     };
 

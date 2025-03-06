@@ -1,0 +1,130 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="insert-test-data" author="Ivan Kazakov">
+        <insert tableName="booking">
+            <column name="id" value="123e4567-e89b-12d3-a456-426614174000"/>
+            <column name="ticket_id" value="123e4567-e89b-12d3-a456-426614174001"/>
+            <column name="phone" value="+1234567890"/>
+            <column name="email" value="test1@example.com"/>
+        </insert>
+
+        <insert tableName="booking">
+            <column name="id" value="123e4567-e89b-12d3-a456-426614174002"/>
+            <column name="ticket_id" value="123e4567-e89b-12d3-a456-426614174003"/>
+            <column name="phone" value="+0987654321"/>
+            <column name="email" value="test2@example.com"/>
+        </insert>
+
+        <insert tableName="booking">
+            <column name="id" value="123e4567-e89b-12d3-a456-426614174004"/>
+            <column name="ticket_id" value="123e4567-e89b-12d3-a456-426614174005"/>
+            <column name="phone" value="+1122334455"/>
+            <column name="email" value="test3@example.com"/>
+        </insert>
+
+
+        <insert tableName="ticket">
+            <column name="id" value="123e4567-e89b-12d3-a456-426614174001"/>
+            <column name="transport_type" value="BUS"/>
+            <column name="price" value="50.0"/>
+            <column name="departure" value="New York"/>
+            <column name="departure_date_time" value="2025-09-06T10:00:00Z"/>
+            <column name="arrival" value="Los Angeles"/>
+            <column name="arrival_date_time" value="2025-09-06T18:00:00Z"/>
+        </insert>
+
+        <insert tableName="ticket">
+            <column name="id" value="123e4567-e89b-12d3-a456-426614174003"/>
+            <column name="transport_type" value="PLANE"/>
+            <column name="price" value="300.0"/>
+            <column name="departure" value="London"/>
+            <column name="departure_date_time" value="2025-08-07T12:00:00Z"/>
+            <column name="arrival" value="Paris"/>
+            <column name="arrival_date_time" value="2025-08-07T14:00:00Z"/>
+        </insert>
+
+        <insert tableName="ticket">
+            <column name="id" value="123e4567-e89b-12d3-a456-426614174005"/>
+            <column name="transport_type" value="TRAIN"/>
+            <column name="price" value="100.0"/>
+            <column name="departure" value="Berlin"/>
+            <column name="departure_date_time" value="2025-06-08T09:00:00Z"/>
+            <column name="arrival" value="Munich"/>
+            <column name="arrival_date_time" value="2025-06-08T15:00:00Z"/>
+        </insert>
+
+        <insert tableName="ticket">
+            <column name="id" value="123e4567-e89b-12d3-a456-426614174007"/>
+            <column name="transport_type" value="BUS"/>
+            <column name="price" value="40.0"/>
+            <column name="departure" value="Chicago"/>
+            <column name="departure_date_time" value="2025-06-09T08:00:00Z"/>
+            <column name="arrival" value="Houston"/>
+            <column name="arrival_date_time" value="2025-06-09T16:00:00Z"/>
+        </insert>
+
+        <insert tableName="ticket">
+            <column name="id" value="123e4567-e89b-12d3-a456-426614174009"/>
+            <column name="transport_type" value="PLANE"/>
+            <column name="price" value="250.0"/>
+            <column name="departure" value="Tokyo"/>
+            <column name="departure_date_time" value="2025-08-10T14:00:00Z"/>
+            <column name="arrival" value="Seoul"/>
+            <column name="arrival_date_time" value="2025-08-10T16:00:00Z"/>
+        </insert>
+
+        <insert tableName="ticket">
+            <column name="id" value="123e4567-e89b-12d3-a456-426614174011"/>
+            <column name="transport_type" value="TRAIN"/>
+            <column name="price" value="120.0"/>
+            <column name="departure" value="Moscow"/>
+            <column name="departure_date_time" value="2025-05-11T10:00:00Z"/>
+            <column name="arrival" value="St. Petersburg"/>
+            <column name="arrival_date_time" value="2025-05-11T18:00:00Z"/>
+        </insert>
+
+        <insert tableName="ticket">
+            <column name="id" value="123e4567-e89b-12d3-a456-426614174013"/>
+            <column name="transport_type" value="BUS"/>
+            <column name="price" value="60.0"/>
+            <column name="departure" value="Toronto"/>
+            <column name="departure_date_time" value="2025-05-12T07:00:00Z"/>
+            <column name="arrival" value="Vancouver"/>
+            <column name="arrival_date_time" value="2025-05-12T15:00:00Z"/>
+        </insert>
+
+        <insert tableName="ticket">
+            <column name="id" value="123e4567-e89b-12d3-a456-426614174015"/>
+            <column name="transport_type" value="PLANE"/>
+            <column name="price" value="400.0"/>
+            <column name="departure" value="Sydney"/>
+            <column name="departure_date_time" value="2025-06-13T11:00:00Z"/>
+            <column name="arrival" value="Melbourne"/>
+            <column name="arrival_date_time" value="2025-06-13T13:00:00Z"/>
+        </insert>
+
+        <insert tableName="ticket">
+            <column name="id" value="123e4567-e89b-12d3-a456-426614174017"/>
+            <column name="transport_type" value="TRAIN"/>
+            <column name="price" value="90.0"/>
+            <column name="departure" value="Madrid"/>
+            <column name="departure_date_time" value="2025-06-14T09:00:00Z"/>
+            <column name="arrival" value="Barcelona"/>
+            <column name="arrival_date_time" value="2025-06-14T14:00:00Z"/>
+        </insert>
+
+        <insert tableName="ticket">
+            <column name="id" value="123e4567-e89b-12d3-a456-426614174019"/>
+            <column name="transport_type" value="BUS"/>
+            <column name="price" value="55.0"/>
+            <column name="departure" value="Rome"/>
+            <column name="departure_date_time" value="2025-07-15T08:00:00Z"/>
+            <column name="arrival" value="Milan"/>
+            <column name="arrival_date_time" value="2025-07-15T12:00:00Z"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

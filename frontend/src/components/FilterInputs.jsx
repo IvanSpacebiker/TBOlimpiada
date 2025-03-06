@@ -6,7 +6,7 @@ const FilterInputs = () => {
         <Box display="flex" gap={2} mb={2}>
             <TextField label="Departure" variant="outlined" />
             <TextField label="Arrival" variant="outlined" />
-            <TextField type="datetime-local" label="Date" variant="outlined" />
+            <TextField type="datetime-local" variant="outlined" />
         </Box>
     );
 };

@@ -9,7 +9,7 @@ public record TicketFilters(
 		String departure,
 		String arrival,
 		TransportType transportType,
-		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 		ZonedDateTime departureDateTime
 ) {
 }

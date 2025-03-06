@@ -11,12 +11,7 @@ const App = () => {
     const handleSearch = async (params) => {
         setSearchParams(params);
         try {
-            const response = await getTickets(params);
-            if (Array.isArray(response.data)) {
-                setTickets(response.data);
-            } else {
-                console.error('Unexpected data format:', response.data);
-            }
+            await getTickets(params).then(response => setTickets(response.data));
         } catch (error) {
             console.error('Error fetching tickets:', error);
         }
