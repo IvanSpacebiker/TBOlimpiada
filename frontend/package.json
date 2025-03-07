@@ -14,9 +14,14 @@
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.4.5",
     "@mui/material": "^6.4.5",
+    "@mui/x-date-pickers": "^7.27.3",
     "axios": "^1.7.9",
+    "date-fns": "^2.29.3",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-input-mask": "^2.0.4",
+    "react-input-mask-next": "^3.0.0-alpha.12",
+    "react-number-format": "^5.4.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

@@ -18,6 +18,7 @@ public class Booking {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 
+	@NonNull
 	@OneToOne
 	private Ticket ticket;
 

@@ -4,36 +4,26 @@ import com.kzkv.tbolimpiada.dto.TicketFilters;
 import com.kzkv.tbolimpiada.entity.Booking;
 import com.kzkv.tbolimpiada.entity.Ticket;
 import com.kzkv.tbolimpiada.entity.TransportType;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.Optional;
 
 public class TicketSpecification {
 
-	private static EntityManager em;
-
 	public static Specification<Ticket> hasDeparture(String departure) {
-		return (root, query, cb) -> departure == null || departure.isEmpty() ? null : cb.equal(root.get("departure"), departure);
+		return (root, query, cb) -> departure == null || departure.isEmpty() ? null : cb.like(cb.lower(root.get("departure")), "%" + departure.toLowerCase() + "%");
 	}
 
 	public static Specification<Ticket> hasArrival(String arrival) {
-		return (root, query, cb) -> arrival == null || arrival.isEmpty() ? null : cb.equal(root.get("arrival"), arrival);
+		return (root, query, cb) -> arrival == null || arrival.isEmpty() ? null : cb.like(cb.lower(root.get("arrival")), "%" + arrival.toLowerCase() + "%");
 	}
 
 	public static Specification<Ticket> hasTransportType(TransportType transportType) {
 		return (root, query, cb) -> transportType == TransportType.ANY ? null : cb.equal(root.get("transportType"), transportType);
-	}
-
-	public static Specification<Ticket> hasDepartureDateTimeAfterNow() {
-		return (root, query, cb) -> cb.greaterThanOrEqualTo(root.get("departureDateTime"), LocalDateTime.now());
 	}
 
 	public static Specification<Ticket> isNotBooked() {
@@ -49,14 +39,15 @@ public class TicketSpecification {
 
 	public static Specification<Ticket> closestToDesiredDateTime(ZonedDateTime desiredDateTime) {
 		return (root, query, cb) -> {
-			if (desiredDateTime == null) {
-				return null;
-			}
-			Expression<Long> desiredEpoch = cb.literal(desiredDateTime.toEpochSecond());
+			Expression<Long> desiredEpoch = cb.literal(desiredDateTime != null ? desiredDateTime.toEpochSecond(): ZonedDateTime.now().toEpochSecond());
 			Expression<Long> timeDifference = cb.abs(cb.diff(root.get("departureEpoch"), desiredEpoch));
 			Optional.ofNullable(query).ifPresent(q -> q.orderBy(cb.asc(timeDifference)));
 			return null;
 		};
+	}
+
+	public static Specification<Ticket> hasDepartureDateTimeAfterBorder(ZonedDateTime borderDateTime) {
+		return (root, query, cb) -> cb.greaterThanOrEqualTo(root.get("departureDateTime"), borderDateTime != null ? borderDateTime : ZonedDateTime.now());
 	}
 
 	public static Specification<Ticket> withFilters(TicketFilters filters) {
@@ -64,8 +55,8 @@ public class TicketSpecification {
 				.where(hasDeparture(filters.departure()))
 				.and(hasArrival(filters.arrival()))
 				.and(hasTransportType(filters.transportType()))
-				.and(closestToDesiredDateTime(filters.departureDateTime()))
-				.and(hasDepartureDateTimeAfterNow())
+				.and(closestToDesiredDateTime(filters.desiredDateTime()))
+				.and(hasDepartureDateTimeAfterBorder(filters.borderDateTime()))
 				.and(isNotBooked());
 	}
 }

@@ -1,18 +1,36 @@
-import React, { useState } from 'react';
-import {TextField, Button, Box, Typography, Grid, FormControl, InputLabel, Select, MenuItem} from '@mui/material';
+import React, {useEffect, useState} from 'react';
+import {TextField, Button, Box, Grid, FormControl, InputLabel, Select, MenuItem} from '@mui/material';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
+import {LocalizationProvider} from "@mui/x-date-pickers";
+import {ru} from "date-fns/locale";
+import {getArrivals, getDepartures} from "../services/RouteService.js";
 
 const SearchForm = ({ onSearch }) => {
     const [transportType, setTransportType] = useState("ANY");
     const [departure, setDeparture] = useState('');
     const [arrival, setArrival] = useState('');
-    const [datetime, setDatetime] = useState('');
+    const [datetime, setDatetime] = useState(null);
+    const [departureOptions, setDepartureOptions] = useState([""]);
+    const [arrivalOptions, setArrivalOptions] = useState([""]);
+
+    useEffect(() => {
+        const loadOptions = async () => {
+            const [uniqueDepartures, uniqueArrivals] = await Promise.all([
+                getDepartures(),
+                getArrivals(),
+            ]);
+            console.log(uniqueDepartures)
+            setDepartureOptions(["", ...uniqueDepartures.data]);
+            setArrivalOptions(["", ...uniqueArrivals.data]);
+        };
+        loadOptions();
+    }, []);
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        const departureDateTime = datetime
-            ? new Date(datetime).toISOString()
-            : null;
-        onSearch({ transportType, departure, arrival, departureDateTime });
+        const desiredDateTime = datetime ? new Date(datetime).toISOString() : null;
+        onSearch({ transportType, departure, arrival, desiredDateTime });
     };
 
     return (
@@ -21,13 +39,13 @@ const SearchForm = ({ onSearch }) => {
                 <Grid container spacing={2} alignItems="center">
                     <Grid item xs={6} sm={3}>
                         <FormControl fullWidth>
-                            <InputLabel id="transport-type-label">Транспорт</InputLabel>
+                            <InputLabel id="transport-type-label">Вид транспорта</InputLabel>
                             <Select
                                 labelId="transport-type-label"
                                 id="transport-type-select"
                                 value={transportType}
                                 onChange={(e) => setTransportType(e.target.value)}
-                                label="Транспорт"
+                                label="Вид транспорта"
                             >
                                 <MenuItem value="ANY">Любой</MenuItem>
                                 <MenuItem value="PLANE">Самолет</MenuItem>
@@ -37,28 +55,50 @@ const SearchForm = ({ onSearch }) => {
                         </FormControl>
                     </Grid>
                     <Grid item xs={6} sm={3}>
-                        <TextField
-                            label="Откуда"
-                            value={departure}
-                            onChange={(e) => setDeparture(e.target.value)}
-                            fullWidth
-                        />
+                        <FormControl fullWidth>
+                            <InputLabel id="departure-label">Пункт отправления</InputLabel>
+                            <Select
+                                labelId="departure-label"
+                                id="departure-select"
+                                value={departure}
+                                onChange={(e) => setDeparture(e.target.value)}
+                                label="Пункт отправления"
+                            >
+                                {departureOptions.map((option, index) => (
+                                    <MenuItem key={index} value={option}>
+                                        {option === "" ? "ㅤ" : option}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </Grid>
                     <Grid item xs={6} sm={3}>
-                        <TextField
-                            label="Куда"
-                            value={arrival}
-                            onChange={(e) => setArrival(e.target.value)}
-                            fullWidth
-                        />
+                        <FormControl fullWidth>
+                            <InputLabel id="arrival-label">Пункт прибытия</InputLabel>
+                            <Select
+                                labelId="arrival-label"
+                                id="arrival-select"
+                                value={arrival}
+                                onChange={(e) => setArrival(e.target.value)}
+                                label="Пункт прибытия"
+                            >
+                                {arrivalOptions.map((option, index) => (
+                                    <MenuItem key={index} value={option}>
+                                        {option === "" ? "ㅤ" : option}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </Grid>
                     <Grid item xs={6} sm={3}>
-                        <TextField
-                            type="datetime-local"
-                            value={datetime}
-                            onChange={(e) => setDatetime(e.target.value)}
-                            fullWidth
-                        />
+                        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ru}>
+                            <DateTimePicker
+                                label="Выберите дату и время"
+                                value={datetime}
+                                onChange={(newValue) => setDatetime(newValue)}
+                                renderInput={(params) => <TextField {...params} fullWidth />}
+                            />
+                        </LocalizationProvider>
                     </Grid>
                     <Grid item xs={12} sm={3}>
                         <Button variant="contained" color="primary" type="submit" fullWidth>
