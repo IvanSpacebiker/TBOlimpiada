@@ -11,9 +11,9 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 public class SearchState {
-    String current;
-    List<Ticket> path;
-    ZonedDateTime arrivalTime;
-    Set<String> visited;
+	String current;
+	List<Ticket> path;
+	ZonedDateTime arrivalTime;
+	Set<String> visited;
 
 }

@@ -26,7 +26,7 @@ public class RouteServiceImpl implements RouteService {
 	public Page<Route> findAllRoutes(TicketFilters filters, Pageable pageable) {
 		List<Route> allRoutes = new ArrayList<>();
 		if (isInvalidFilters(filters)) {
-			allRoutes =  ticketRepository.findAll(TicketSpecification.withFilters(filters))
+			allRoutes = ticketRepository.findAll(TicketSpecification.withFilters(filters))
 					.stream()
 					.map(ticket -> new Route(List.of(ticket)))
 					.toList();

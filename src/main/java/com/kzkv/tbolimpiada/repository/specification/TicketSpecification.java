@@ -39,7 +39,7 @@ public class TicketSpecification {
 
 	public static Specification<Ticket> closestToDesiredDateTime(ZonedDateTime desiredDateTime) {
 		return (root, query, cb) -> {
-			Expression<Long> desiredEpoch = cb.literal(desiredDateTime != null ? desiredDateTime.toEpochSecond(): ZonedDateTime.now().toEpochSecond());
+			Expression<Long> desiredEpoch = cb.literal(desiredDateTime != null ? desiredDateTime.toEpochSecond() : ZonedDateTime.now().toEpochSecond());
 			Expression<Long> timeDifference = cb.abs(cb.diff(root.get("departureEpoch"), desiredEpoch));
 			Optional.ofNullable(query).ifPresent(q -> q.orderBy(cb.asc(timeDifference)));
 			return null;

@@ -18,42 +18,42 @@ import java.time.format.DateTimeFormatter;
 @Service
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
-    private final Session session;
+	private final Session session;
 
-    public void sendEmail(String toEmail, Booking booking, HttpServletRequest request) {
-        try {
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("no-reply@localhost"));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-            message.setSubject("Бронирование билета");
-            message.setText(buildContent(booking, request));
+	public void sendEmail(String toEmail, Booking booking, HttpServletRequest request) {
+		try {
+			Message message = new MimeMessage(session);
+			message.setFrom(new InternetAddress("no-reply@localhost"));
+			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
+			message.setSubject("Бронирование билета");
+			message.setText(buildContent(booking, request));
 
-            Transport.send(message);
-            System.out.println("Email sent successfully.");
-        } catch (MessagingException e) {
-            System.err.println("Error sending email: " + e.getMessage());
-        }
-    }
+			Transport.send(message);
+			System.out.println("Email sent successfully.");
+		} catch (MessagingException e) {
+			System.err.println("Error sending email: " + e.getMessage());
+		}
+	}
 
-    private String buildContent(Booking booking, HttpServletRequest request) {
-        Ticket ticket = booking.getTicket();
+	private String buildContent(Booking booking, HttpServletRequest request) {
+		Ticket ticket = booking.getTicket();
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-        String departureDateTimeFormatted = ticket.getDepartureDateTime().format(formatter);
-        String arrivalDateTimeFormatted = ticket.getArrivalDateTime().format(formatter);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+		String departureDateTimeFormatted = ticket.getDepartureDateTime().format(formatter);
+		String arrivalDateTimeFormatted = ticket.getArrivalDateTime().format(formatter);
 
-        String host = request.getHeader("Host");
-        String scheme = request.getScheme();
-        String baseUrl = scheme + "://" + host + "" +
-                "/bookings/" + booking.getId();
+		String host = request.getHeader("Host");
+		String scheme = request.getScheme();
+		String baseUrl = scheme + "://" + host + "" +
+				"/bookings/" + booking.getId();
 
-        return "Ваш билет успешно забронирован!\n" +
-                "-----------------------------\n" +
-                "Тип транспорта: " + ticket.getTransportType() + "\n" +
-                "Отправление: " + ticket.getDeparture() + " (" + departureDateTimeFormatted + ")\n" +
-                "Прибытие: " + ticket.getArrival() + " (" + arrivalDateTimeFormatted + ")\n" +
-                "Цена: " + ticket.getPrice() + " руб.\n" +
-                "-----------------------------\n" +
-                "Чтобы отменить бронирование, перейдите по ссылке: " + baseUrl;
-    }
+		return "Ваш билет успешно забронирован!\n" +
+				"-----------------------------\n" +
+				"Тип транспорта: " + ticket.getTransportType() + "\n" +
+				"Отправление: " + ticket.getDeparture() + " (" + departureDateTimeFormatted + ")\n" +
+				"Прибытие: " + ticket.getArrival() + " (" + arrivalDateTimeFormatted + ")\n" +
+				"Цена: " + ticket.getPrice() + " руб.\n" +
+				"-----------------------------\n" +
+				"Чтобы отменить бронирование, перейдите по ссылке: " + baseUrl;
+	}
 }

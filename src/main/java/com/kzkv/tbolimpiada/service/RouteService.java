@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface RouteService {
 	Page<Route> findAllRoutes(TicketFilters filters, Pageable pageable);
+
 	List<String> getUniqueDepartures();
+
 	List<String> getUniqueArrivals();
 }

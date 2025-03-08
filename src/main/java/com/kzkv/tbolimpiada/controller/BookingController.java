@@ -15,7 +15,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("bookings")
 public class BookingController {
-	
+
 	private final BookingService bookingService;
 
 	@GetMapping("{id}")

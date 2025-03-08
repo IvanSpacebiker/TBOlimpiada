@@ -23,16 +23,19 @@
                 <constraints nullable="false"/>
             </column>
             <column name="arrival_date_time" type="TIMESTAMP WITH TIME ZONE">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>
 
     <changeSet id="add-check-constraints" author="Ivan Kazakov">
         <sql><![CDATA[
-            ALTER TABLE ticket ADD CONSTRAINT chk_departure_not_equal_arrival CHECK (departure <> arrival);
-            ALTER TABLE ticket ADD CONSTRAINT chk_departure_before_arrival CHECK (departure_date_time < arrival_date_time);
-            ALTER TABLE ticket ADD CONSTRAINT chk_valid_transport_type CHECK (transport_type IN ('BUS', 'TRAIN', 'PLANE'));
+            ALTER TABLE ticket
+                ADD CONSTRAINT chk_departure_not_equal_arrival CHECK (departure <> arrival);
+            ALTER TABLE ticket
+                ADD CONSTRAINT chk_departure_before_arrival CHECK (departure_date_time < arrival_date_time);
+            ALTER TABLE ticket
+                ADD CONSTRAINT chk_valid_transport_type CHECK (transport_type IN ('BUS', 'TRAIN', 'PLANE'));
             ]]></sql>
     </changeSet>
 
