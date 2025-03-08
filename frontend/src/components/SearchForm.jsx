@@ -20,7 +20,6 @@ const SearchForm = ({ onSearch }) => {
                 getDepartures(),
                 getArrivals(),
             ]);
-            console.log(uniqueDepartures)
             setDepartureOptions(["", ...uniqueDepartures.data]);
             setArrivalOptions(["", ...uniqueArrivals.data]);
         };

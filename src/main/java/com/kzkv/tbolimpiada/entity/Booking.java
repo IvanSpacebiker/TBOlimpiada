@@ -1,10 +1,10 @@
 package com.kzkv.tbolimpiada.entity;
 
+import com.kzkv.tbolimpiada.entity.converter.EncryptionConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.UUID;
-import com.kzkv.tbolimpiada.entity.converter.EncryptionConverter;
 
 @Setter
 @Getter

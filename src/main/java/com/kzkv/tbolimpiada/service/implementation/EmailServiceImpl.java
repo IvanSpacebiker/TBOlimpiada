@@ -3,6 +3,7 @@ package com.kzkv.tbolimpiada.service.implementation;
 import com.kzkv.tbolimpiada.entity.Booking;
 import com.kzkv.tbolimpiada.entity.Ticket;
 import com.kzkv.tbolimpiada.service.EmailService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +20,13 @@ import java.time.format.DateTimeFormatter;
 public class EmailServiceImpl implements EmailService {
     private final Session session;
 
-    public void sendEmail(String toEmail, Booking booking) {
+    public void sendEmail(String toEmail, Booking booking, HttpServletRequest request) {
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress("no-reply@localhost"));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
             message.setSubject("Бронирование билета");
-            message.setText(buildContent(booking));
+            message.setText(buildContent(booking, request));
 
             Transport.send(message);
             System.out.println("Email sent successfully.");
@@ -34,12 +35,17 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
-    private String buildContent(Booking booking) {
+    private String buildContent(Booking booking, HttpServletRequest request) {
         Ticket ticket = booking.getTicket();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         String departureDateTimeFormatted = ticket.getDepartureDateTime().format(formatter);
         String arrivalDateTimeFormatted = ticket.getArrivalDateTime().format(formatter);
+
+        String host = request.getHeader("Host");
+        String scheme = request.getScheme();
+        String baseUrl = scheme + "://" + host + "" +
+                "/bookings/" + booking.getId();
 
         return "Ваш билет успешно забронирован!\n" +
                 "-----------------------------\n" +
@@ -48,7 +54,6 @@ public class EmailServiceImpl implements EmailService {
                 "Прибытие: " + ticket.getArrival() + " (" + arrivalDateTimeFormatted + ")\n" +
                 "Цена: " + ticket.getPrice() + " руб.\n" +
                 "-----------------------------\n" +
-                "Чтобы отменить бронирование, перейдите по ссылке: " +
-                "http://localhost/api/bookings/" + booking.getId();
+                "Чтобы отменить бронирование, перейдите по ссылке: " + baseUrl;
     }
 }

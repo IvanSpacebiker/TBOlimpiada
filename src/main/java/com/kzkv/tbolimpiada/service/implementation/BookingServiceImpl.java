@@ -4,6 +4,7 @@ import com.kzkv.tbolimpiada.entity.Booking;
 import com.kzkv.tbolimpiada.repository.BookingRepository;
 import com.kzkv.tbolimpiada.service.BookingService;
 import com.kzkv.tbolimpiada.service.EmailService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,9 +18,14 @@ public class BookingServiceImpl implements BookingService {
 	private final BookingRepository bookingRepository;
 	private final EmailService emailService;
 
-	public Booking createBooking(Booking booking) {
+	@Override
+	public Booking getBooking(UUID id) {
+		return bookingRepository.findById(id).orElseThrow();
+	}
+
+	public Booking createBooking(Booking booking, HttpServletRequest request) {
 		Booking bookingEntity = bookingRepository.save(booking);
-		emailService.sendEmail(bookingEntity.getEmail(), bookingEntity);
+		emailService.sendEmail(bookingEntity.getEmail(), bookingEntity, request);
 		return bookingEntity;
 	}
 

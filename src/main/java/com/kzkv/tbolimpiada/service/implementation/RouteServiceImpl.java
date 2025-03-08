@@ -95,7 +95,7 @@ public class RouteServiceImpl implements RouteService {
 	}
 
 	private boolean isInvalidFilters(TicketFilters filters) {
-		return StringUtils.isBlank(filters.departure()) || StringUtils.isBlank(filters.arrival());
+		return StringUtils.isBlank(filters.departure()) || StringUtils.isBlank(filters.arrival()) || filters.departure().equals(filters.arrival());
 	}
 
 	public List<String> getUniqueDepartures() {

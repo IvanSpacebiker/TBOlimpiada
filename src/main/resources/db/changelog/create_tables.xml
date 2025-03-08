@@ -13,12 +13,27 @@
                 <constraints nullable="false"/>
             </column>
             <column name="price" type="DOUBLE"/>
-            <column name="departure" type="VARCHAR(255)"/>
-            <column name="departure_date_time" type="TIMESTAMP WITH TIME ZONE"/>
-            <column name="arrival" type="VARCHAR(255)"/>
-            <column name="arrival_date_time" type="TIMESTAMP WITH TIME ZONE"/>
-            <column name="booking_id" type="UUID"/>
+            <column name="departure" type="VARCHAR(255)">
+                <constraints nullable="false" checkConstraint="departure &lt;&gt; arrival"/>
+            </column>
+            <column name="departure_date_time" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false" checkConstraint="departure_date_time &lt; arrival_date_time"/>
+            </column>
+            <column name="arrival" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="arrival_date_time" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false" />
+            </column>
         </createTable>
+    </changeSet>
+
+    <changeSet id="add-check-constraints" author="Ivan Kazakov">
+        <sql><![CDATA[
+            ALTER TABLE ticket ADD CONSTRAINT chk_departure_not_equal_arrival CHECK (departure <> arrival);
+            ALTER TABLE ticket ADD CONSTRAINT chk_departure_before_arrival CHECK (departure_date_time < arrival_date_time);
+            ALTER TABLE ticket ADD CONSTRAINT chk_valid_transport_type CHECK (transport_type IN ('BUS', 'TRAIN', 'PLANE'));
+            ]]></sql>
     </changeSet>
 
     <changeSet id="create-booking-table" author="Ivan Kazakov">
@@ -26,7 +41,9 @@
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="ticket_id" type="UUID"/>
+            <column name="ticket_id" type="UUID">
+                <constraints nullable="false" unique="true"/>
+            </column>
             <column name="phone" type="VARCHAR(255)"/>
             <column name="email" type="VARCHAR(255)"/>
         </createTable>

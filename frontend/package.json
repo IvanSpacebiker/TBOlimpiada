@@ -21,7 +21,8 @@
     "react-dom": "^19.0.0",
     "react-input-mask": "^2.0.4",
     "react-input-mask-next": "^3.0.0-alpha.12",
-    "react-number-format": "^5.4.3"
+    "react-number-format": "^5.4.3",
+    "react-router-dom": "^7.3.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
