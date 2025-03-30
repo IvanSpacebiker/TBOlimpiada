@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, TextField, Button, Box, Typography, Grid } from '@mui/material';
 import { createBooking } from "../services/BookingService.js";
 
-const BookingPopup = ({ open, onClose, tickets }) => {
+const BookingPopup = ({ open, onClose, tickets, onUpdateRoutes }) => {
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
     const [errors, setErrors] = useState({ phone: '', email: '' });
@@ -33,17 +33,27 @@ const BookingPopup = ({ open, onClose, tickets }) => {
 
     const handleConfirmBooking = async () => {
         if (validate()) {
-            tickets.map(async (ticket) => {
-                await createBooking({ticket, phone, email});
-            })
-            onClose();
-            window.location.reload();
+            try {
+                await Promise.all(
+                    tickets.map((ticket) =>
+                        createBooking({ ticket, phone, email })
+                    )
+                );
+
+                onClose();
+
+                if (onUpdateRoutes) {
+                    onUpdateRoutes();
+                }
+            } catch (error) {
+                console.error('Error creating booking:', error);
+            }
         }
     };
 
     const formatDateTime = (dateTime) => {
         if (!dateTime) return '';
-        const date = new Date(dateTime)
+        const date = new Date(dateTime);
         const formattedDate = new Intl.DateTimeFormat('ru-RU').format(date);
         const formattedTime = new Intl.DateTimeFormat('ru-RU', {
             hour: '2-digit',
@@ -51,7 +61,7 @@ const BookingPopup = ({ open, onClose, tickets }) => {
             hour12: false,
         }).format(date);
 
-        return {date: formattedDate, time: formattedTime};
+        return { date: formattedDate, time: formattedTime };
     };
 
     return (

@@ -1,30 +1,15 @@
-import React, {useEffect, useState} from 'react';
-import {TextField, Button, Box, Grid, FormControl, InputLabel, Select, MenuItem} from '@mui/material';
+import React, { useState } from 'react';
+import { TextField, Button, Box, Grid, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
-import {LocalizationProvider} from "@mui/x-date-pickers";
-import {ru} from "date-fns/locale";
-import {getArrivals, getDepartures} from "../services/RouteService.js";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { ru } from "date-fns/locale";
 
-const SearchForm = ({ onSearch }) => {
+const SearchForm = ({ onSearch, departureOptions, arrivalOptions }) => {
     const [transportType, setTransportType] = useState("ANY");
     const [departure, setDeparture] = useState('');
     const [arrival, setArrival] = useState('');
     const [datetime, setDatetime] = useState(null);
-    const [departureOptions, setDepartureOptions] = useState([""]);
-    const [arrivalOptions, setArrivalOptions] = useState([""]);
-
-    useEffect(() => {
-        const loadOptions = async () => {
-            const [uniqueDepartures, uniqueArrivals] = await Promise.all([
-                getDepartures(),
-                getArrivals(),
-            ]);
-            setDepartureOptions(["", ...uniqueDepartures.data]);
-            setArrivalOptions(["", ...uniqueArrivals.data]);
-        };
-        loadOptions();
-    }, []);
 
     const handleSubmit = (event) => {
         event.preventDefault();

@@ -8,7 +8,7 @@ const transportTypeMap = {
     BUS: "Автобус"
 };
 
-const RouteCard = ({route}) => {
+const RouteCard = ({route, onUpdateRoutes}) => {
     const [popup, setPopup] = useState(null);
 
     const handleSelectTicket = (ticket) => {
@@ -124,6 +124,7 @@ const RouteCard = ({route}) => {
                     open={!!popup}
                     onClose={closePopup}
                     tickets={popup === null ? [] : popup}
+                    onUpdateRoutes={onUpdateRoutes}
                 />
             </CardContent>
         </Card>

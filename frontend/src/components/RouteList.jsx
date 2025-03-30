@@ -2,7 +2,7 @@ import React from 'react';
 import {Box} from '@mui/material';
 import RouteCard from "./RouteCard.jsx";
 
-const RouteList = ({ routes }) => {
+const RouteList = ({ routes, onUpdateRoutes }) => {
     if (!Array.isArray(routes)) {
         return <div>Error: Tickets data is not an array.</div>;
     }
@@ -10,7 +10,7 @@ const RouteList = ({ routes }) => {
     return (
         <Box display="flex" flexDirection="column" gap={2}>
             {routes.map(route => (
-                <RouteCard route={route} />
+                <RouteCard route={route} onUpdateRoutes={onUpdateRoutes}/>
             ))}
         </Box>
     );
