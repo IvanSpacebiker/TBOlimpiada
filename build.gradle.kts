@@ -28,6 +28,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.liquibase:liquibase-core")
 	implementation("com.sun.mail:javax.mail:1.6.2")
+	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 	testImplementation("org.testcontainers:junit-jupiter")
 	testImplementation("org.springframework.boot:spring-boot-testcontainers")
 	testImplementation("org.testcontainers:postgresql")

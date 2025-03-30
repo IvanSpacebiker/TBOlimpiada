@@ -5,7 +5,6 @@ import com.kzkv.tbolimpiada.entity.Ticket;
 import com.kzkv.tbolimpiada.entity.TransportType;
 import com.kzkv.tbolimpiada.repository.BookingRepository;
 import com.kzkv.tbolimpiada.service.implementation.BookingServiceImpl;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,7 +19,12 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class BookingServiceImplTest {
@@ -40,12 +44,12 @@ class BookingServiceImplTest {
 
 		when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
 
-		Booking result = bookingService.createBooking(booking, mock(HttpServletRequest.class));
+		Booking result = bookingService.createBooking(booking);
 
 		assertThat(result).isNotNull();
 		assertThat(result.getId()).isEqualTo(booking.getId());
 		verify(bookingRepository).save(any(Booking.class));
-		verify(emailService).sendEmail(anyString(), eq(booking), any(HttpServletRequest.class));
+		verify(emailService).sendEmail(anyString(), eq(booking));
 	}
 
 	@Test

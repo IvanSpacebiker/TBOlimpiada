@@ -65,10 +65,11 @@ class BookingControllerIntegrationTest {
 
 	@Test
 	void testCreateAndGetBooking() throws Exception {
-		Booking request = new Booking();
-		request.setTicket(ticketRepository.findById(UUID.fromString("123e4567-e89b-12d3-a456-426614174001")).get());
-		request.setEmail("test@example.com");
-		request.setPhone("123456789");
+		Booking request = Booking.builder()
+				.ticket(ticketRepository.findById(UUID.fromString("123e4567-e89b-12d3-a456-426614174001")).get())
+				.email("test@example.com")
+				.phone("123456789")
+				.build();
 
 		MvcResult createResult = mockMvc.perform(post("/bookings")
 						.contentType(MediaType.APPLICATION_JSON)

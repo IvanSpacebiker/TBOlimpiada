@@ -2,10 +2,14 @@ package com.kzkv.tbolimpiada.service.implementation;
 
 import com.kzkv.tbolimpiada.entity.Booking;
 import com.kzkv.tbolimpiada.entity.Ticket;
+import com.kzkv.tbolimpiada.exception.EmailSendingException;
 import com.kzkv.tbolimpiada.service.EmailService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -17,43 +21,41 @@ import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EmailServiceImpl implements EmailService {
 	private final Session session;
+	private final TemplateEngine templateEngine;
+	private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
-	public void sendEmail(String toEmail, Booking booking, HttpServletRequest request) {
+	@Value("${app.host}")
+	private String host;
+
+	public void sendEmail(String toEmail, Booking booking) {
 		try {
 			Message message = new MimeMessage(session);
-			message.setFrom(new InternetAddress("no-reply@localhost"));
+			message.setFrom(new InternetAddress("no-reply@booking-service"));
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
 			message.setSubject("Бронирование билета");
-			message.setText(buildContent(booking, request));
+			message.setContent(buildContent(booking), "text/html; charset=utf-8");
 
 			Transport.send(message);
-			System.out.println("Email sent successfully.");
+			log.info("Email sent successfully.");
 		} catch (MessagingException e) {
-			System.err.println("Error sending email: " + e.getMessage());
+			log.error("Error sending email: {}", e.getMessage());
+			throw new EmailSendingException("Error sending email.", e);
 		}
 	}
 
-	private String buildContent(Booking booking, HttpServletRequest request) {
-		Ticket ticket = booking.getTicket();
+	private String buildContent(Booking booking) {
+		Context context = new Context();
+		context.setVariable("ticket", booking.getTicket());
+		context.setVariable("departureDateTime", booking.getTicket().getDepartureDateTime().format(formatter));
+		context.setVariable("arrivalDateTime", booking.getTicket().getArrivalDateTime().format(formatter));
+		context.setVariable("baseUrl", getBaseUrl(booking));
+		return templateEngine.process("email-template", context);
+	}
 
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-		String departureDateTimeFormatted = ticket.getDepartureDateTime().format(formatter);
-		String arrivalDateTimeFormatted = ticket.getArrivalDateTime().format(formatter);
-
-		String host = request.getHeader("Host");
-		String scheme = request.getScheme();
-		String baseUrl = scheme + "://" + host + "" +
-				"/bookings/" + booking.getId();
-
-		return "Ваш билет успешно забронирован!\n" +
-				"-----------------------------\n" +
-				"Тип транспорта: " + ticket.getTransportType() + "\n" +
-				"Отправление: " + ticket.getDeparture() + " (" + departureDateTimeFormatted + ")\n" +
-				"Прибытие: " + ticket.getArrival() + " (" + arrivalDateTimeFormatted + ")\n" +
-				"Цена: " + ticket.getPrice() + " руб.\n" +
-				"-----------------------------\n" +
-				"Чтобы отменить бронирование, перейдите по ссылке: " + baseUrl;
+	private String getBaseUrl(Booking booking) {
+		return host + "/bookings/" + booking.getId();
 	}
 }

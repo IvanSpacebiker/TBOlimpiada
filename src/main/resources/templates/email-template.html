@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<p>Ваш билет успешно забронирован!</p>
+<hr>
+<p>Тип транспорта: <span th:text="${ticket.transportType}"></span></p>
+<p>Отправление: <span th:text="${ticket.departure}"></span> (<span th:text="${departureDateTime}"></span>)</p>
+<p>Прибытие: <span th:text="${ticket.arrival}"></span> (<span th:text="${arrivalDateTime}"></span>)</p>
+<p>Цена: <span th:text="${ticket.price}"></span> руб.</p>
+<hr>
+<p><a th:href="${baseUrl}">Отменить бронирование</a></p>
+</body>
+</html>

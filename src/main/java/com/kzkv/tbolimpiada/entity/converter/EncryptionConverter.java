@@ -1,5 +1,6 @@
 package com.kzkv.tbolimpiada.entity.converter;
 
+import com.kzkv.tbolimpiada.exception.EncryptionConverterException;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import lombok.Getter;
@@ -35,7 +36,7 @@ public class EncryptionConverter implements AttributeConverter<String, String> {
 			byte[] encryptedBytes = cipher.doFinal(attribute.getBytes());
 			return Base64.getEncoder().encodeToString(encryptedBytes);
 		} catch (Exception e) {
-			throw new RuntimeException("Error encrypting data", e);
+			throw new EncryptionConverterException("Error encrypting data", e);
 		}
 	}
 
@@ -47,7 +48,7 @@ public class EncryptionConverter implements AttributeConverter<String, String> {
 			byte[] decodedBytes = Base64.getDecoder().decode(dbData);
 			return new String(cipher.doFinal(decodedBytes));
 		} catch (Exception e) {
-			throw new RuntimeException("Error decrypting data", e);
+			throw new EncryptionConverterException("Error decrypting data", e);
 		}
 	}
 }

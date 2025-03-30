@@ -50,10 +50,11 @@ class EncryptionIntegrationTest {
 
 	@Test
 	void testEncryptionDecryption() {
-		Booking booking = new Booking();
-		booking.setTicket(createSampleTicket());
-		booking.setEmail("test@example.com");
-		booking.setPhone("123456789");
+		Booking booking = Booking.builder()
+				.ticket(createSampleTicket())
+				.email("test@example.com")
+				.phone("123456789")
+				.build();
 
 		Booking saved = bookingRepository.save(booking);
 		Booking retrieved = bookingRepository.findById(saved.getId()).orElseThrow();

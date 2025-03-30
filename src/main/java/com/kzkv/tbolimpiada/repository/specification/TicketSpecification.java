@@ -14,6 +14,10 @@ import java.util.Optional;
 
 public class TicketSpecification {
 
+	private TicketSpecification() {
+		throw new IllegalStateException("Specification class");
+	}
+
 	public static Specification<Ticket> hasDeparture(String departure) {
 		return (root, query, cb) -> departure == null || departure.isEmpty() ? null : cb.like(cb.lower(root.get("departure")), "%" + departure.toLowerCase() + "%");
 	}
@@ -30,8 +34,7 @@ public class TicketSpecification {
 		return (root, query, cb) -> {
 			Subquery<Long> subquery = query.subquery(Long.class);
 			Root<Booking> bookingRoot = subquery.from(Booking.class);
-			subquery.select(cb.literal(1L))
-					.where(cb.equal(bookingRoot.get("ticket"), root));
+			subquery.select(cb.literal(1L)).where(cb.equal(bookingRoot.get("ticket"), root));
 
 			return cb.not(cb.exists(subquery));
 		};
@@ -41,7 +44,7 @@ public class TicketSpecification {
 		return (root, query, cb) -> {
 			Expression<Long> desiredEpoch = cb.literal(desiredDateTime != null ? desiredDateTime.toEpochSecond() : ZonedDateTime.now().toEpochSecond());
 			Expression<Long> timeDifference = cb.abs(cb.diff(root.get("departureEpoch"), desiredEpoch));
-			Optional.ofNullable(query).ifPresent(q -> q.orderBy(cb.asc(timeDifference)));
+			query.orderBy(cb.asc(timeDifference));
 			return null;
 		};
 	}
