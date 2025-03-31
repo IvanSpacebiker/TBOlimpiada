@@ -18,11 +18,11 @@ public class TicketSpecification {
 	}
 
 	public static Specification<Ticket> hasDeparture(String departure) {
-		return (root, query, cb) -> departure == null || departure.isEmpty() ? null : cb.like(cb.lower(root.get("departure")), "%" + departure.toLowerCase() + "%");
+		return (root, query, cb) -> departure == null || departure.isEmpty() ? null : cb.equal(root.get("departure"), departure.toLowerCase());
 	}
 
 	public static Specification<Ticket> hasArrival(String arrival) {
-		return (root, query, cb) -> arrival == null || arrival.isEmpty() ? null : cb.like(cb.lower(root.get("arrival")), "%" + arrival.toLowerCase() + "%");
+		return (root, query, cb) -> arrival == null || arrival.isEmpty() ? null : cb.equal(root.get("arrival"), arrival.toLowerCase());
 	}
 
 	public static Specification<Ticket> hasTransportType(TransportType transportType) {

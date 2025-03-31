@@ -1,44 +1,44 @@
 package com.kzkv.tbolimpiada.service.implementation;
 
 import com.kzkv.tbolimpiada.entity.Booking;
-import com.kzkv.tbolimpiada.entity.Ticket;
 import com.kzkv.tbolimpiada.exception.EmailSendingException;
 import com.kzkv.tbolimpiada.service.EmailService;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class EmailServiceImpl implements EmailService {
-	private final Session session;
+	private final JavaMailSender mailSender;
 	private final TemplateEngine templateEngine;
 	private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
 	@Value("${app.host}")
 	private String host;
 
+	@Async
 	public void sendEmail(String toEmail, Booking booking) {
 		try {
-			Message message = new MimeMessage(session);
-			message.setFrom(new InternetAddress("no-reply@booking-service"));
-			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-			message.setSubject("Бронирование билета");
-			message.setContent(buildContent(booking), "text/html; charset=utf-8");
+			MimeMessage message = mailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+			helper.setFrom("no-reply@booking-service");
+			helper.setTo(toEmail);
+			helper.setSubject("Бронирование билета");
+			helper.setText(buildContent(booking), true);
 
-			Transport.send(message);
+			mailSender.send(message);
 			log.info("Email sent successfully.");
 		} catch (MessagingException e) {
 			log.error("Error sending email: {}", e.getMessage());
