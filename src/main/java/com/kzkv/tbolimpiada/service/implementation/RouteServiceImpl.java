@@ -6,8 +6,8 @@ import com.kzkv.tbolimpiada.dto.TicketFilters;
 import com.kzkv.tbolimpiada.entity.Ticket;
 import com.kzkv.tbolimpiada.entity.TransportType;
 import com.kzkv.tbolimpiada.repository.TicketRepository;
-import com.kzkv.tbolimpiada.repository.specification.TicketSpecification;
 import com.kzkv.tbolimpiada.service.RouteService;
+import com.kzkv.tbolimpiada.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.Cacheable;
@@ -28,6 +28,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class RouteServiceImpl implements RouteService {
 	private final TicketRepository ticketRepository;
+	private final TicketService ticketService;
 
 	@Cacheable(value = "routes", key = "#filters")
 	public Page<Route> findAllRoutes(TicketFilters filters, Pageable pageable) {
@@ -44,7 +45,7 @@ public class RouteServiceImpl implements RouteService {
 
 	private List<Route> getRoutes(TicketFilters filters) {
 		return isInvalidFilters(filters)
-				? ticketRepository.findAll(TicketSpecification.withFilters(filters))
+				? ticketService.getAllTickets(filters)
 				.stream()
 				.map(ticket -> new Route(List.of(ticket)))
 				.toList()
@@ -87,14 +88,13 @@ public class RouteServiceImpl implements RouteService {
 
 			TicketFilters filters = new TicketFilters(current, null, transportType, desiredDateTime, currentArrivalTime);
 
-			ticketRepository.findAll(TicketSpecification.withFilters(filters))
+			ticketService.getAllTickets(filters)
+					.stream()
+					.filter(ticket -> !visited.contains(ticket.getArrival()))
 					.forEach(ticket -> {
-						String next = ticket.getArrival();
-						if (!visited.contains(next)) {
-							List<Ticket> newPath = new ArrayList<>(path);
-							newPath.add(ticket);
-							stack.push(new SearchState(next, newPath, ticket.getArrivalDateTime(), new HashSet<>(visited)));
-						}
+						List<Ticket> newPath = new ArrayList<>(path);
+						newPath.add(ticket);
+						stack.push(new SearchState(ticket.getArrival(), newPath, ticket.getArrivalDateTime(), new HashSet<>(visited)));
 					});
 		}
 		return routes;
@@ -104,7 +104,7 @@ public class RouteServiceImpl implements RouteService {
 		return StringUtils.isBlank(filters.departure()) || StringUtils.isBlank(filters.arrival()) || filters.departure().equals(filters.arrival());
 	}
 
-	@Cacheable(value = "depatures")
+	@Cacheable(value = "departures")
 	public List<String> getUniqueDepartures() {
 		return ticketRepository.findUniqueDepartures();
 	}

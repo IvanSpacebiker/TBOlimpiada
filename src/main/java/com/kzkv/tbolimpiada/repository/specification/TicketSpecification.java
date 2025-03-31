@@ -10,7 +10,6 @@ import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.ZonedDateTime;
-import java.util.Optional;
 
 public class TicketSpecification {
 

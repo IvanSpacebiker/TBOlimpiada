@@ -39,6 +39,24 @@
             ]]></sql>
     </changeSet>
 
+    <changeSet id="add-indexes-to-ticket" author="Ivan Kazakov">
+        <createIndex indexName="idx_ticket_transport_type" tableName="ticket" unique="false">
+            <column name="transport_type"/>
+        </createIndex>
+        <createIndex indexName="idx_ticket_departure" tableName="ticket" unique="false">
+            <column name="departure"/>
+        </createIndex>
+        <createIndex indexName="idx_ticket_arrival" tableName="ticket" unique="false">
+            <column name="arrival"/>
+        </createIndex>
+        <createIndex indexName="idx_ticket_departure_date_time" tableName="ticket" unique="false">
+            <column name="departure_date_time"/>
+        </createIndex>
+        <createIndex indexName="idx_ticket_arrival_date_time" tableName="ticket" unique="false">
+            <column name="arrival_date_time"/>
+        </createIndex>
+    </changeSet>
+
     <changeSet id="create-booking-table" author="Ivan Kazakov">
         <createTable tableName="booking">
             <column name="id" type="UUID">
