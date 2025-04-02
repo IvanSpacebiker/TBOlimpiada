@@ -1,14 +1,21 @@
-package com.kzkv.tbolimpiada.repository;
+package com.kzkv.tbolimpiada.repository.generator;
 
 import com.kzkv.tbolimpiada.entity.Ticket;
 import com.kzkv.tbolimpiada.entity.TransportType;
+import com.kzkv.tbolimpiada.repository.BookingRepository;
+import com.kzkv.tbolimpiada.repository.TicketGraphRepository;
+import com.kzkv.tbolimpiada.repository.TicketRepository;
+import com.kzkv.tbolimpiada.service.TicketGraphService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Component
@@ -17,24 +24,31 @@ public class TestDataGenerator {
 
 	private final TicketRepository ticketRepository;
 	private final BookingRepository bookingRepository;
+	private final TicketGraphRepository ticketGraphRepository;
+	private final TicketGraphService ticketGraphService;
+
+	@Value("${generator.amount}")
+	private int numberOfTickets;
 
 	@PostConstruct
 	public void generateData() {
-		ticketRepository.deleteAll();
+		ticketGraphRepository.deleteAll();
 		bookingRepository.deleteAll();
+		ticketRepository.deleteAll();
 
-		int numberOfRecords = 1000;
+		List<Ticket> tickets = new ArrayList<>();
 
-		for (int i = 0; i < numberOfRecords; i++) {
+		for (int i = 0; i < numberOfTickets; i++) {
 			Ticket ticket = new Ticket();
 			setRandomTransportType(ticket);
 			setRandomPrice(ticket);
 			setRandomCities(ticket);
 			setRandomDateTimes(ticket);
-
-			ticketRepository.save(ticket);
+			tickets.add(ticket);
 		}
 
+		ticketRepository.saveAll(tickets);
+		ticketGraphService.buildTicketGraph(tickets);
 	}
 
 	private void setRandomTransportType(Ticket ticket) {

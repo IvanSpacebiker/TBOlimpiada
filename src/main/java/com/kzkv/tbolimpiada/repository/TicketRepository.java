@@ -16,4 +16,6 @@ public interface TicketRepository extends JpaRepository<Ticket, UUID>, JpaSpecif
 
 	@Query("SELECT DISTINCT t.arrival FROM Ticket t ORDER BY t.arrival")
 	List<String> findUniqueArrivals();
+
+	List<Ticket> findByDeparture(String departure);
 }
