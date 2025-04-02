@@ -1,7 +1,11 @@
-package com.kzkv.tbolimpiada.repository;
+package com.kzkv.tbolimpiada.repository.generator;
 
 import com.kzkv.tbolimpiada.entity.Ticket;
 import com.kzkv.tbolimpiada.entity.TransportType;
+import com.kzkv.tbolimpiada.repository.BookingRepository;
+import com.kzkv.tbolimpiada.repository.TicketGraphRepository;
+import com.kzkv.tbolimpiada.repository.TicketRepository;
+import com.kzkv.tbolimpiada.service.TicketGraphService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -9,6 +13,8 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Component
@@ -17,12 +23,16 @@ public class TestDataGenerator {
 
 	private final TicketRepository ticketRepository;
 	private final BookingRepository bookingRepository;
+	private final TicketGraphRepository ticketGraphRepository;
+	private final TicketGraphService ticketGraphService;
 
 	@PostConstruct
 	public void generateData() {
-		ticketRepository.deleteAll();
+		ticketGraphRepository.deleteAll();
 		bookingRepository.deleteAll();
+		ticketRepository.deleteAll();
 
+		List<Ticket> tickets = new ArrayList<>();
 		int numberOfRecords = 1000;
 
 		for (int i = 0; i < numberOfRecords; i++) {
@@ -31,10 +41,11 @@ public class TestDataGenerator {
 			setRandomPrice(ticket);
 			setRandomCities(ticket);
 			setRandomDateTimes(ticket);
-
-			ticketRepository.save(ticket);
+			tickets.add(ticket);
 		}
 
+		ticketRepository.saveAll(tickets);
+		ticketGraphService.buildTicketGraph(tickets);
 	}
 
 	private void setRandomTransportType(Ticket ticket) {
