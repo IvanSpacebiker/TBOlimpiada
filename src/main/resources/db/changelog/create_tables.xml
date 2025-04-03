@@ -70,4 +70,26 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="create-ticket-graph-table" author="Ivan Kazakov">
+        <createTable tableName="ticket_graph">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ticket_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="next_ticket_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="add-composite-index-to-ticket-graph" author="Ivan Kazakov">
+        <createIndex indexName="idx_ticket_graph_composite" tableName="ticket_graph" unique="false">
+            <column name="ticket_id"/>
+            <column name="next_ticket_id"/>
+        </createIndex>
+    </changeSet>
+
+
 </databaseChangeLog>
