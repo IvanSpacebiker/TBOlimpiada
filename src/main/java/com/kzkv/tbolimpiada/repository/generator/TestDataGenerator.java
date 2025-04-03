@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -36,7 +36,7 @@ public class TestDataGenerator {
 		bookingRepository.deleteAll();
 		ticketRepository.deleteAll();
 
-		List<Ticket> tickets = new ArrayList<>();
+		List<Ticket> tickets = new LinkedList<>();
 
 		for (int i = 0; i < numberOfTickets; i++) {
 			Ticket ticket = new Ticket();
