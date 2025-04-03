@@ -18,10 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -51,23 +53,20 @@ public class TicketServiceImpl implements TicketService {
 	}
 
 	@Transactional(readOnly = true)
-	protected List<Route> buildRoutesIterative(
-			String start,
-			String destination,
-			TransportType transportType
-	) {
+	protected List<Route> buildRoutesIterative(String start, String destination, TransportType transportType) {
 		Map<UUID, List<Ticket>> ticketGraph = ticketGraphService.getTicketGraph();
 		List<Ticket> startTickets = ticketRepository.findByDeparture(start);
 		List<Route> routes = new LinkedList<>();
 		Queue<SearchState> queue = new LinkedList<>();
 
-		queue.add(new SearchState(start, new LinkedList<>(), null));
+		queue.add(new SearchState(start, new LinkedList<>(), null, new HashSet<>()));
 
 		while (!queue.isEmpty()) {
 			SearchState currentState = queue.poll();
 			String current = currentState.current();
 			List<Ticket> path = currentState.path();
 			ZonedDateTime currentArrivalTime = currentState.arrivalTime();
+			Set<String> visited = currentState.visited();
 
 			if (current.equals(destination)) {
 				routes.add(new Route(new LinkedList<>(path)));
@@ -80,20 +79,25 @@ public class TicketServiceImpl implements TicketService {
 					: ticketGraph.getOrDefault(lastTicketId, Collections.emptyList());
 
 			for (Ticket ticket : nextTickets) {
-				if ((transportType == TransportType.ANY || ticket.getTransportType() == transportType) &&
+				String nextCity = ticket.getArrival();
+
+				if (!visited.contains(nextCity) && path.size() < maxDepth &&
+						(transportType == TransportType.ANY || ticket.getTransportType() == transportType) &&
 						(currentArrivalTime == null || ticket.getDepartureDateTime().isAfter(currentArrivalTime))) {
 
 					List<Ticket> newPath = new LinkedList<>(path);
 					newPath.add(ticket);
 
-					if (path.stream().noneMatch(t -> t.getDeparture().equals(ticket.getArrival())) && newPath.size() <= maxDepth) {
-						queue.add(new SearchState(ticket.getArrival(), newPath, ticket.getArrivalDateTime()));
-					}
+					Set<String> newVisited = new HashSet<>(visited);
+					newVisited.add(nextCity);
+
+					queue.add(new SearchState(nextCity, newPath, ticket.getArrivalDateTime(), newVisited));
 				}
 			}
 		}
 		return routes;
 	}
+
 
 	private boolean isInvalidFilters(TicketFilters filters) {
 		return StringUtils.isBlank(filters.departure()) || StringUtils.isBlank(filters.arrival()) || filters.departure().equals(filters.arrival());
