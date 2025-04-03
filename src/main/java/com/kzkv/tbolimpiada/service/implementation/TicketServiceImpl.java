@@ -82,22 +82,22 @@ public class TicketServiceImpl implements TicketService {
 			return;
 		}
 
-		getNextTickets(currentState.path(), startTickets, ticketGraph).forEach(ticket -> searchRoutes(currentState, ticket, transportType, queue));
+		getNextTickets(currentState.path(), startTickets, ticketGraph)
+				.stream()
+				.filter(ticket -> isCorrectRoute(currentState, ticket, transportType))
+				.forEach(ticket -> searchRoutes(currentState, ticket, queue));
 	}
 
-	private void searchRoutes(SearchState currentState, Ticket ticket, TransportType transportType, Queue<SearchState> queue) {
+	private void searchRoutes(SearchState currentState, Ticket ticket, Queue<SearchState> queue) {
 		String nextCity = ticket.getArrival();
 
-		if (isCorrectRoute(currentState, ticket, transportType)) {
+		List<Ticket> newPath = new LinkedList<>(currentState.path());
+		newPath.add(ticket);
 
-			List<Ticket> newPath = new LinkedList<>(currentState.path());
-			newPath.add(ticket);
+		Set<String> newVisited = new HashSet<>(currentState.visited());
+		newVisited.add(nextCity);
 
-			Set<String> newVisited = new HashSet<>(currentState.visited());
-			newVisited.add(nextCity);
-
-			queue.add(new SearchState(nextCity, newPath, ticket.getArrivalDateTime(), newVisited));
-		}
+		queue.add(new SearchState(nextCity, newPath, ticket.getArrivalDateTime(), newVisited));
 	}
 
 	private boolean isCorrectRoute(SearchState state, Ticket ticket, TransportType transportType) {
