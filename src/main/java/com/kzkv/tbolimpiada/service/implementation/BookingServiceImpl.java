@@ -23,7 +23,7 @@ public class BookingServiceImpl implements BookingService {
 	@Transactional(readOnly = true)
 	@Cacheable(value = "bookings", key = "#id")
 	public Booking getBooking(UUID id) {
-		return bookingRepository.findById(id).orElseThrow(() -> new BookingNotFoundException(id));
+		return bookingRepository.findById(id).orElseThrow(() -> new BookingNotFoundException("Booking with id %s not found".formatted(id)));
 	}
 
 	@Transactional
@@ -39,7 +39,7 @@ public class BookingServiceImpl implements BookingService {
 		try {
 			bookingRepository.deleteById(id);
 		} catch (EmptyResultDataAccessException e) {
-			throw new BookingNotFoundException(id);
+			throw new BookingNotFoundException("Booking not found", e);
 		}
 	}
 }

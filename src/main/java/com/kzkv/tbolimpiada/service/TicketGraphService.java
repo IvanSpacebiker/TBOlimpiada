@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface TicketGraphService {
-	void buildTicketGraph(List<Ticket> tickets);
 	Map<UUID, List<Ticket>> getTicketGraph();
+
+	void buildTicketGraph(List<Ticket> tickets);
 }

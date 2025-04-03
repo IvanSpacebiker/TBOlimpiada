@@ -3,7 +3,8 @@ package com.kzkv.tbolimpiada.exception;
 import java.util.UUID;
 
 public class BookingNotFoundException extends IllegalArgumentException {
-	public BookingNotFoundException(UUID id) {
-		super("Booking with ID " + id.toString() + " not found.");
+	public BookingNotFoundException(String message, Throwable cause) {
+		super(message, cause);
 	}
+	public BookingNotFoundException(String message) {}
 }

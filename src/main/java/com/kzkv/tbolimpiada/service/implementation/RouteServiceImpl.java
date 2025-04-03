@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -35,16 +36,12 @@ public class RouteServiceImpl implements RouteService {
 
 	private int sortRoutes(TicketFilters filters, Route o1, Route o2) {
 		ZonedDateTime desired = filters.desiredDateTime() != null ? filters.desiredDateTime() : ZonedDateTime.now();
-		long o1ToDesired = Math.abs(o1.getDepartureDateTime().toEpochSecond() - desired.toEpochSecond());
-		long o2ToDesired = Math.abs(o2.getDepartureDateTime().toEpochSecond() - desired.toEpochSecond());
-		long o1TravelTime = getTravelTime(o1);
-		long o2TravelTime = getTravelTime(o2);
-		int compareByDesiredTime = Long.compare(o1ToDesired, o2ToDesired);
-		if (compareByDesiredTime == 0) {
-			return Long.compare(o1TravelTime, o2TravelTime);
-		}
-		return compareByDesiredTime;
+		return Comparator
+				.comparingLong((Route r) -> Math.abs(r.getDepartureDateTime().toEpochSecond() - desired.toEpochSecond()))
+				.thenComparingLong(this::getTravelTime)
+				.compare(o1, o2);
 	}
+
 
 	private long getTravelTime(Route route) {
 		return route.getTickets().getLast().getArrivalDateTime().toEpochSecond() - route.getTickets().getFirst().getDepartureDateTime().toEpochSecond();

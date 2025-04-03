@@ -20,7 +20,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @Component
 @RequiredArgsConstructor
-public class TestDataGenerator {
+public class DataGenerator {
 
 	private final TicketRepository ticketRepository;
 	private final BookingRepository bookingRepository;
@@ -74,7 +74,7 @@ public class TestDataGenerator {
 
 	private void setRandomDateTimes(Ticket ticket) {
 		ZonedDateTime startDate = ZonedDateTime.of(2025, 6, 1, 0, 0, 0, 0, ZoneId.systemDefault());
-		ZonedDateTime endDate = startDate.plusYears(1);
+		ZonedDateTime endDate = startDate.plusMonths(3);
 		long startMillis = startDate.toInstant().toEpochMilli();
 		long endMillis = endDate.toInstant().toEpochMilli();
 

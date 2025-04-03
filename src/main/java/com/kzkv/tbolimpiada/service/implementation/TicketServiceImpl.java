@@ -62,40 +62,62 @@ public class TicketServiceImpl implements TicketService {
 		queue.add(new SearchState(start, new LinkedList<>(), null, new HashSet<>()));
 
 		while (!queue.isEmpty()) {
-			SearchState currentState = queue.poll();
-			String current = currentState.current();
-			List<Ticket> path = currentState.path();
-			ZonedDateTime currentArrivalTime = currentState.arrivalTime();
-			Set<String> visited = currentState.visited();
-
-			if (current.equals(destination)) {
-				routes.add(new Route(new LinkedList<>(path)));
-				continue;
-			}
-
-			UUID lastTicketId = path.isEmpty() ? null : path.getLast().getId();
-			List<Ticket> nextTickets = (lastTicketId == null)
-					? startTickets
-					: ticketGraph.getOrDefault(lastTicketId, Collections.emptyList());
-
-			for (Ticket ticket : nextTickets) {
-				String nextCity = ticket.getArrival();
-
-				if (!visited.contains(nextCity) && path.size() < maxDepth &&
-						(transportType == TransportType.ANY || ticket.getTransportType() == transportType) &&
-						(currentArrivalTime == null || ticket.getDepartureDateTime().isAfter(currentArrivalTime))) {
-
-					List<Ticket> newPath = new LinkedList<>(path);
-					newPath.add(ticket);
-
-					Set<String> newVisited = new HashSet<>(visited);
-					newVisited.add(nextCity);
-
-					queue.add(new SearchState(nextCity, newPath, ticket.getArrivalDateTime(), newVisited));
-				}
-			}
+			processState(destination, transportType, queue, routes, startTickets, ticketGraph);
 		}
 		return routes;
+	}
+
+	private void processState(
+			String destination,
+			TransportType transportType,
+			Queue<SearchState> queue,
+			List<Route> routes,
+			List<Ticket> startTickets,
+			Map<UUID, List<Ticket>> ticketGraph
+	) {
+		SearchState currentState = queue.poll();
+
+		if (currentState.current().equals(destination)) {
+			routes.add(new Route(new LinkedList<>(currentState.path())));
+			return;
+		}
+
+		getNextTickets(currentState.path(), startTickets, ticketGraph).forEach(ticket -> searchRoutes(currentState, ticket, transportType, queue));
+	}
+
+	private void searchRoutes(SearchState currentState, Ticket ticket, TransportType transportType, Queue<SearchState> queue) {
+		String nextCity = ticket.getArrival();
+
+		if (isCorrectRoute(currentState, ticket, transportType)) {
+
+			List<Ticket> newPath = new LinkedList<>(currentState.path());
+			newPath.add(ticket);
+
+			Set<String> newVisited = new HashSet<>(currentState.visited());
+			newVisited.add(nextCity);
+
+			queue.add(new SearchState(nextCity, newPath, ticket.getArrivalDateTime(), newVisited));
+		}
+	}
+
+	private boolean isCorrectRoute(SearchState state, Ticket ticket, TransportType transportType) {
+		return !state.visited().contains(ticket.getArrival())
+				&& state.path().size() < maxDepth
+				&& isTransportTypeCorrect(ticket, transportType)
+				&& isArrivalTimeCorrect(ticket, state.arrivalTime());
+	}
+
+	private boolean isArrivalTimeCorrect(Ticket ticket, ZonedDateTime currentArrivalTime) {
+		return currentArrivalTime == null || ticket.getDepartureDateTime().isAfter(currentArrivalTime);
+	}
+
+	private boolean isTransportTypeCorrect(Ticket ticket, TransportType transportType) {
+		return transportType == TransportType.ANY || ticket.getTransportType() == transportType;
+	}
+
+	private List<Ticket> getNextTickets(List<Ticket> path, List<Ticket> startTickets, Map<UUID, List<Ticket>> ticketGraph) {
+		if (path.isEmpty()) return startTickets;
+		return ticketGraph.getOrDefault(path.getLast().getId(), Collections.emptyList());
 	}
 
 
