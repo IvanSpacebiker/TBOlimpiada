@@ -8,6 +8,7 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -40,7 +41,7 @@ public class EmailServiceImpl implements EmailService {
 
 			mailSender.send(message);
 			log.info("Email sent successfully.");
-		} catch (MessagingException e) {
+		} catch (MailException | MessagingException e) {
 			log.error("Error sending email: {}", e.getMessage());
 			throw new EmailSendingException("Error sending email.", e);
 		}

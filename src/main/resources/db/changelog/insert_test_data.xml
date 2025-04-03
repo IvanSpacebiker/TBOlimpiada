@@ -1,0 +1,19 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="insert-test-data" author="Ivan Kazakov">
+
+        <insert tableName="ticket">
+            <column name="id" value="123e4567-e89b-12d3-a456-426614174001"/>
+            <column name="transport_type" value="TRAIN"/>
+            <column name="price" value="50.0"/>
+            <column name="departure" value="CityA"/>
+            <column name="departure_date_time" value="2025-09-06T10:00:00Z"/>
+            <column name="arrival" value="CityB"/>
+            <column name="arrival_date_time" value="2025-09-06T18:00:00Z"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Testcontainers
 @AutoConfigureMockMvc
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = "generator.enabled=false")
 class BookingControllerIntegrationTest {
 
 	@Autowired
@@ -89,11 +89,14 @@ class BookingControllerIntegrationTest {
 	@Test
 	void testDeleteBooking() throws Exception {
 		Ticket ticket = ticketRepository.findById(UUID.fromString("123e4567-e89b-12d3-a456-426614174001")).get();
-		Booking booking = bookingRepository.findOne(Example.of(Booking.builder()
-				.ticket(ticket)
-				.email("test@example.com")
-				.phone("123456789")
-				.build())).get();
+		Booking booking = bookingRepository.findOne(
+				Example.of(
+						Booking.builder()
+								.ticket(ticket)
+								.email("test@example.com")
+								.phone("123456789")
+								.build()
+				)).get();
 
 		mockMvc.perform(delete("/bookings/{id}", booking.getId()))
 				.andExpect(status().isNoContent());

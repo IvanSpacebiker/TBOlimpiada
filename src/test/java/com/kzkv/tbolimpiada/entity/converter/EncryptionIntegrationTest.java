@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
 @AutoConfigureMockMvc
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = "generator.enabled=false")
 class EncryptionIntegrationTest {
 
 	@Autowired

@@ -14,20 +14,25 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RouteServiceImplTest {
 
 	@Mock
 	private TicketRepository ticketRepository;
+
+	@Mock
+	private TicketService ticketService;
 
 	@InjectMocks
 	private RouteServiceImpl routeService;
@@ -37,14 +42,15 @@ class RouteServiceImplTest {
 		TicketFilters filters = new TicketFilters("CityA", "CityB", TransportType.TRAIN, ZonedDateTime.now(), null);
 		Pageable pageable = PageRequest.of(0, 10);
 
-		when(ticketRepository.findAll(any(Specification.class)))
-				.thenReturn(List.of(createSampleTicket()));
+		List<Ticket> tickets = List.of(createSampleTicket());
+
+		when(ticketService.buildRoutes(any(TicketFilters.class))).thenReturn(List.of(new Route(tickets)));
 
 		Page<Route> result = routeService.findAllRoutes(filters, pageable);
 
 		assertThat(result).isNotNull();
 		assertThat(result.getContent()).isNotEmpty();
-		verify(ticketRepository, atLeastOnce()).findAll(any(Specification.class));
+		verify(ticketService, atLeastOnce()).buildRoutes(any(TicketFilters.class));
 	}
 
 	@Test

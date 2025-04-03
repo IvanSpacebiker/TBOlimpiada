@@ -11,7 +11,7 @@ import java.sql.DriverManager;
 
 public class LiquibaseRunner {
 
-	private static final String CHANGELOG_PATH = "db/changelog/db.changelog-master.yaml";
+	private static final String CHANGELOG_PATH = "db/changelog/db.changelog-test.yaml";
 
 	public static void runMigrations(String jdbcUrl, String username, String password) throws Exception {
 		try (Connection connection = DriverManager.getConnection(jdbcUrl, username, password)) {
@@ -19,7 +19,7 @@ public class LiquibaseRunner {
 					.findCorrectDatabaseImplementation(new JdbcConnection(connection));
 
 			Liquibase liquibase = new Liquibase(CHANGELOG_PATH, new ClassLoaderResourceAccessor(), database);
-			liquibase.update("");
+			liquibase.update();
 		}
 	}
 }

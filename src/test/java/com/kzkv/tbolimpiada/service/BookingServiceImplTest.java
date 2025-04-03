@@ -3,6 +3,7 @@ package com.kzkv.tbolimpiada.service;
 import com.kzkv.tbolimpiada.entity.Booking;
 import com.kzkv.tbolimpiada.entity.Ticket;
 import com.kzkv.tbolimpiada.entity.TransportType;
+import com.kzkv.tbolimpiada.exception.BookingNotFoundException;
 import com.kzkv.tbolimpiada.repository.BookingRepository;
 import com.kzkv.tbolimpiada.service.implementation.BookingServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -10,9 +11,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.time.ZonedDateTime;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,8 +22,8 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -73,14 +74,12 @@ class BookingServiceImplTest {
 
 		Throwable thrown = catchThrowable(() -> bookingService.getBooking(id));
 
-		assertThat(thrown).isInstanceOf(NoSuchElementException.class);
+		assertThat(thrown).isInstanceOf(BookingNotFoundException.class);
 	}
 
 	@Test
 	void testDeleteBooking_Existing() {
 		UUID id = UUID.randomUUID();
-
-		when(bookingRepository.existsById(id)).thenReturn(true);
 
 		assertDoesNotThrow(() -> bookingService.deleteBooking(id));
 		verify(bookingRepository).deleteById(id);
@@ -90,14 +89,15 @@ class BookingServiceImplTest {
 	void testDeleteBooking_NonExisting() {
 		UUID id = UUID.randomUUID();
 
-		when(bookingRepository.existsById(id)).thenReturn(false);
+		doThrow(new EmptyResultDataAccessException(1)).when(bookingRepository).deleteById(id);
 
 		Throwable thrown = catchThrowable(() -> bookingService.deleteBooking(id));
 
 		assertThat(thrown)
-				.isInstanceOf(IllegalArgumentException.class)
+				.isInstanceOf(BookingNotFoundException.class)
 				.hasMessageContaining("not found");
-		verify(bookingRepository, never()).deleteById(any(UUID.class));
+
+		verify(bookingRepository).deleteById(id);
 	}
 
 	private Booking createSampleBooking() {

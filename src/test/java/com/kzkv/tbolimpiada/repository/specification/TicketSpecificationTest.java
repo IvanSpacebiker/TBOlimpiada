@@ -24,16 +24,15 @@ class TicketSpecificationTest {
 		CriteriaBuilder cb = mock(CriteriaBuilder.class);
 		Root<Ticket> root = mock(Root.class);
 		Path<String> pathExpression = mock(Path.class);
-		Predicate likePredicate = mock(Predicate.class);
+		Predicate equalPredicate = mock(Predicate.class);
 
 		when(root.get("departure")).thenAnswer(invocation -> pathExpression);
-		when(cb.lower(pathExpression)).thenReturn(pathExpression);
-		when(cb.like(eq(pathExpression), eq("%citya%"))).thenReturn(likePredicate);
+		when(cb.equal(pathExpression, "CityA")).thenReturn(equalPredicate);
 
 		Predicate predicate = spec.toPredicate(root, null, cb);
 
 		assertThat(predicate).isNotNull();
-		verify(cb).like(any(Path.class), eq("%citya%"));
+		verify(cb).equal(any(Path.class), eq("CityA"));
 	}
 
 	@Test
@@ -43,16 +42,15 @@ class TicketSpecificationTest {
 		CriteriaBuilder cb = mock(CriteriaBuilder.class);
 		Root<Ticket> root = mock(Root.class);
 		Path<String> pathExpression = mock(Path.class);
-		Predicate likePredicate = mock(Predicate.class);
+		Predicate equalPredicate = mock(Predicate.class);
 
 		when(root.get("arrival")).thenAnswer(invocation -> pathExpression);
-		when(cb.lower(pathExpression)).thenReturn(pathExpression);
-		when(cb.like(eq(pathExpression), eq("%cityb%"))).thenReturn(likePredicate);
+		when(cb.equal(pathExpression, "CityB")).thenReturn(equalPredicate);
 
 		Predicate predicate = spec.toPredicate(root, null, cb);
 
 		assertThat(predicate).isNotNull();
-		verify(cb).like(any(Path.class), eq("%cityb%"));
+		verify(cb).equal(any(Path.class), eq("CityB"));
 	}
 
 	@Test

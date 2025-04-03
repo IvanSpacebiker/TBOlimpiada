@@ -9,6 +9,7 @@ import com.kzkv.tbolimpiada.service.TicketGraphService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -20,6 +21,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @Component
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "generator.enabled", havingValue = "true", matchIfMissing = true)
 public class DataGenerator {
 
 	private final TicketRepository ticketRepository;
