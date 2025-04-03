@@ -5,7 +5,6 @@ import com.kzkv.tbolimpiada.dto.TicketFilters;
 import com.kzkv.tbolimpiada.entity.TransportType;
 import com.kzkv.tbolimpiada.repository.TicketRepository;
 import com.kzkv.tbolimpiada.service.implementation.TicketServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,11 +35,6 @@ class TicketServiceImplTest {
 
     @InjectMocks
     private TicketServiceImpl ticketService;
-
-    @BeforeEach
-    void setUp() {
-        ticketService = new TicketServiceImpl(ticketRepository, ticketGraphService);
-    }
 
     @Test
     void testBuildRoutes_WithInvalidFilters_ReturnsSimpleRoutes() {

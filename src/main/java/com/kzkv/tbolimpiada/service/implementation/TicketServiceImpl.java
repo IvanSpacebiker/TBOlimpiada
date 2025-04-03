@@ -116,8 +116,7 @@ public class TicketServiceImpl implements TicketService {
 	}
 
 	private List<Ticket> getNextTickets(List<Ticket> path, List<Ticket> startTickets, Map<UUID, List<Ticket>> ticketGraph) {
-		if (path.isEmpty()) return startTickets;
-		return ticketGraph.getOrDefault(path.getLast().getId(), Collections.emptyList());
+		return path.isEmpty() ? startTickets : ticketGraph.getOrDefault(path.getLast().getId(), Collections.emptyList());
 	}
 
 
