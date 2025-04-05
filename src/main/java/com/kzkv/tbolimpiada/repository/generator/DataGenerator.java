@@ -66,7 +66,7 @@ public class DataGenerator {
 		String[] cities = {
 				"New York", "London", "Berlin", "Paris", "Tokyo", "Moscow", "Toronto", "Sydney", "Los Angeles",
 				"Madrid", "Rome", "Minsk", "Beijing", "Prague", "Warsaw", "Saint-Petersburg", "Dublin", "Amsterdam",
-				"Brussel", "Stockholm", "Helsinki", "Oslo"
+				"Brussel", "Stockholm", "Helsinki", "Oslo", "Ufa", "Kazan", "Seoul"
 		};
 		int departure = ThreadLocalRandom.current().nextInt(cities.length);
 		int arrival = (departure + ThreadLocalRandom.current().nextInt(1, cities.length)) % cities.length;
